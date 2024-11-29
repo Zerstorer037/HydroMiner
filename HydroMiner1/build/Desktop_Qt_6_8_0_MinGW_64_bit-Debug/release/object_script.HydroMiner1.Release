@@ -1,0 +1,10 @@
+release/actual.o
+release/alarma.o
+release/historico.o
+release/main.o
+release/menu.o
+release/qrc_recursos.o
+release/moc_actual.o
+release/moc_alarma.o
+release/moc_historico.o
+release/moc_menu.o
