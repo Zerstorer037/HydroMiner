@@ -51,4 +51,7 @@ Ejemplificar cómo un sistema basado en sensores y tecnología IoT puede ayudar 
 
 - **Diseño de interfaz gráfica:** Crear una visualización intuitiva y accesible para análisis rápido.  
 - **Optimización del consumo:** Reducir el uso energético para facilitar la operación en zonas con acceso limitado a electricidad.  
-- **Escalabilidad:** Dejar abierta la posibilidad de añadir nuevos sensores o funcionalidades en futuras iteraciones.  
+- **Escalabilidad:** Dejar abierta la posibilidad de añadir nuevos sensores o funcionalidades en futuras iteraciones.
+
+## Fuentes
+- Parametros: https://github.com/Zerstorer037/HydroMiner/wiki/Parametros
