@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>recursos/160.jpg</file>
+        <file>recursos/48854.jpg</file>
+        <file>recursos/2147608340.jpg</file>
+        <file>recursos/actualA.png</file>
+        <file>recursos/ActualI.png</file>
+        <file>recursos/AjusteI.png</file>
+        <file>recursos/ajustesA.png</file>
+        <file>recursos/alertaA.png</file>
+        <file>recursos/alertaI.png</file>
+        <file>recursos/descargar (1).png</file>
+        <file>recursos/flecha.png</file>
+        <file>recursos/flecha-pequena-izquierda (1).png</file>
+        <file>recursos/flecha-pequena-izquierda (2).png</file>
+        <file>recursos/graficoA.png</file>
+        <file>recursos/grafico-histograma (2).png</file>
+        <file>recursos/grficoI.png</file>
+        <file>recursos/hogar (3).png</file>
+        <file>recursos/luz-emergencia-encendida (2).png</file>
+        <file>recursos/menuA.png</file>
+        <file>recursos/menuI.png</file>
+        <file>recursos/rapido-en-el-tiempo (2).png</file>
+    </qresource>
+</RCC>
