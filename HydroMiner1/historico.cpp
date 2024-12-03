@@ -1,116 +1,126 @@
 #include "historico.h"
 #include "ui_historico.h"
-#include <QtCharts>
-#include <QMessageBox>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+#include <QtCharts>  // Esta librería proporciona la funcionalidad necesaria para crear gráficos interactivos dentro de una aplicación Qt.
+#include <QMessageBox>  // Esta clase se utiliza para crear y mostrar cuadros de mensaje en la interfaz gráfica.
+#include <QNetworkAccessManager>  // Esta clase gestiona las solicitudes de red en una aplicación Qt.
+#include <QNetworkRequest>  // Esta clase define una solicitud de red, especificando los detalles como la URL, los encabezados HTTP y los parámetros de la solicitud.
+#include <QNetworkReply>  // Representa la respuesta a una solicitud de red.
+#include <QJsonDocument>  // Esta clase maneja los documentos JSON en Qt.
+#include <QJsonObject>  // Representa un objeto JSON en Qt, que se corresponde con un diccionario o mapa de clave-valor.
+#include <QJsonArray>  // Representa un arreglo JSON en Qt, que se corresponde con un array de valores.
 
 // Constructor y Destructor
 historico::historico(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::historico)
-    , graficoPH(new QChart())
-    , graficoViewPH(new QChartView(graficoPH))
-    , graficoTEMP(new QChart())
-    , graficoViewTEMP(new QChartView(graficoTEMP))
-    , graficoTDS(new QChart())
-    , graficoViewTDS(new QChartView(graficoTDS))
-    , seriePH(new QLineSeries())
-    , serieTEMP(new QLineSeries())
-    , serieTDS(new QLineSeries())
-    , manager(new QNetworkAccessManager(this))
+    : QMainWindow(parent)  // Constructor de la clase QMainWindow, que se llama al iniciar la ventana principal
+    , ui(new Ui::historico)  // Inicialización de la interfaz de usuario
+    , graficoPH(new QChart())  // Creación de un nuevo objeto para el gráfico de pH
+    , graficoViewPH(new QChartView(graficoPH))  // Vista para el gráfico de pH
+    , graficoTEMP(new QChart())  // Creación de un nuevo objeto para el gráfico de temperatura
+    , graficoViewTEMP(new QChartView(graficoTEMP))  // Vista para el gráfico de temperatura
+    , graficoTDS(new QChart())  // Creación de un nuevo objeto para el gráfico de TDS
+    , graficoViewTDS(new QChartView(graficoTDS))  // Vista para el gráfico de TDS
+    , seriePH(new QLineSeries())  // Serie de datos para pH
+    , serieTEMP(new QLineSeries())  // Serie de datos para temperatura
+    , serieTDS(new QLineSeries())  // Serie de datos para TDS
+    , manager(new QNetworkAccessManager(this))  // Inicialización del manager de red para hacer solicitudes HTTP
 {
-    ui->setupUi(this);
+    ui->setupUi(this);  // Configura la interfaz gráfica según el archivo .ui
 
     // Configuración inicial de widgets
-    ui->desde->setDisplayFormat("yyyy-MM-dd");
-    ui->hasta->setDisplayFormat("yyyy-MM-dd");
-    ui->desde->setDate(QDate::currentDate());
-    ui->hasta->setDate(QDate::currentDate());
+    ui->desde->setDisplayFormat("yyyy-MM-dd");  // Configura el formato de la fecha para 'desde'
+    ui->hasta->setDisplayFormat("yyyy-MM-dd");  // Configura el formato de la fecha para 'hasta'
+    ui->desde->setDate(QDate::currentDate());  // Establece la fecha actual por defecto en 'desde'
+    ui->hasta->setDate(QDate::currentDate());  // Establece la fecha actual por defecto en 'hasta'
 
     // Configuración de gráficos
     configurarGraficos();
 
-    // Configuración de conexiones
+    // Configuración de las conexiones entre los botones y las funciones correspondientes
     setupConnections();
 }
 
+// Destructor
 historico::~historico()
 {
-    delete ui;
+    delete ui;  // Liberar memoria de la interfaz de usuario cuando el objeto sea destruido
 }
-// En historico.cpp
 
+// Función para obtener la fecha de inicio desde el QDateEdit 'desde' como QDateTime
 QDateTime historico::obtenerFechaDesde()
 {
     return ui->desde->dateTime();  // Devuelve la fecha y hora del QDateEdit 'desde'
 }
 
+// Función para obtener la fecha de fin desde el QDateEdit 'hasta' como QDateTime
 QDateTime historico::obtenerFechaHasta()
 {
     return ui->hasta->dateTime();  // Devuelve la fecha y hora del QDateEdit 'hasta'
 }
+
+// Función para configurar las conexiones de los botones de la interfaz de usuario
 void historico::setupConnections() {
-    connect(ui->Bactual, &QPushButton::clicked, this, [this]() { emit goToActual(); });
-    connect(ui->Balarma, &QPushButton::clicked, this, [this]() { emit goToAlarma(); });
-    connect(ui->Bmenu, &QPushButton::clicked, this, [this]() { emit goToMenu(); });
-    connect(ui->Bvolver, &QPushButton::clicked, this, [this]() { emit goToMenu(); });
-    connect(ui->GenerarButton, &QPushButton::clicked, this, &historico::generarGrafico);
+    connect(ui->Bactual, &QPushButton::clicked, this, [this]() { emit goToActual(); });  // Botón para ir a la vista actual
+    connect(ui->Balarma, &QPushButton::clicked, this, [this]() { emit goToAlarma(); });  // Botón para ir a la vista de alarma
+    connect(ui->Bmenu, &QPushButton::clicked, this, [this]() { emit goToMenu(); });  // Botón para ir al menú principal
+    connect(ui->Bvolver, &QPushButton::clicked, this, [this]() { emit goToMenu(); });  // Botón para volver al menú
+    connect(ui->GenerarButton, &QPushButton::clicked, this, &historico::generarGrafico);  // Botón para generar el gráfico
 }
 
+// Función para configurar los gráficos de pH, temperatura y TDS
 void historico::configurarGraficos()
 {
-    graficoPH->addSeries(seriePH);
-    graficoPH->setTitle("pH del agua");
-    graficoPH->createDefaultAxes();
-    graficoPH->axes(Qt::Horizontal).first()->setTitleText("Días");
-    graficoPH->axes(Qt::Vertical).first()->setTitleText("pH");
+    // Configuración para el gráfico de pH
+    graficoPH->addSeries(seriePH);  // Añadir la serie de pH al gráfico
+    graficoPH->setTitle("pH del agua");  // Título del gráfico de pH
+    graficoPH->createDefaultAxes();  // Crear ejes predeterminados para el gráfico
+    graficoPH->axes(Qt::Horizontal).first()->setTitleText("Días");  // Título para el eje X (Días)
+    graficoPH->axes(Qt::Vertical).first()->setTitleText("pH");  // Título para el eje Y (pH)
 
-    QVBoxLayout *layoutPH = new QVBoxLayout(ui->graficoPH);
-    layoutPH->addWidget(graficoViewPH);
-    ui->graficoPH->setLayout(layoutPH);
+    QVBoxLayout *layoutPH = new QVBoxLayout(ui->graficoPH);  // Layout para el gráfico de pH
+    layoutPH->addWidget(graficoViewPH);  // Añadir la vista del gráfico
+    ui->graficoPH->setLayout(layoutPH);  // Configurar el layout del gráfico de pH
 
-    graficoTEMP->addSeries(serieTEMP);
-    graficoTEMP->setTitle("Temperatura");
-    graficoTEMP->createDefaultAxes();
-    graficoTEMP->axes(Qt::Horizontal).first()->setTitleText("Días");
-    graficoTEMP->axes(Qt::Vertical).first()->setTitleText("Temperatura (°C)");
+    // Configuración para el gráfico de temperatura
+    graficoTEMP->addSeries(serieTEMP);  // Añadir la serie de temperatura al gráfico
+    graficoTEMP->setTitle("Temperatura");  // Título del gráfico de temperatura
+    graficoTEMP->createDefaultAxes();  // Crear ejes predeterminados para el gráfico
+    graficoTEMP->axes(Qt::Horizontal).first()->setTitleText("Días");  // Título para el eje X (Días)
+    graficoTEMP->axes(Qt::Vertical).first()->setTitleText("Temperatura (°C)");  // Título para el eje Y (Temperatura)
 
-    QVBoxLayout *layoutTEMP = new QVBoxLayout(ui->graficoTEMP);
-    layoutTEMP->addWidget(graficoViewTEMP);
-    ui->graficoTEMP->setLayout(layoutTEMP);
+    QVBoxLayout *layoutTEMP = new QVBoxLayout(ui->graficoTEMP);  // Layout para el gráfico de temperatura
+    layoutTEMP->addWidget(graficoViewTEMP);  // Añadir la vista del gráfico
+    ui->graficoTEMP->setLayout(layoutTEMP);  // Configurar el layout del gráfico de temperatura
 
-    graficoTDS->addSeries(serieTDS);
-    graficoTDS->setTitle("TDS");
-    graficoTDS->createDefaultAxes();
-    graficoTDS->axes(Qt::Horizontal).first()->setTitleText("Días");
-    graficoTDS->axes(Qt::Vertical).first()->setTitleText("TDS (ppm)");
+    // Configuración para el gráfico de TDS
+    graficoTDS->addSeries(serieTDS);  // Añadir la serie de TDS al gráfico
+    graficoTDS->setTitle("TDS");  // Título del gráfico de TDS
+    graficoTDS->createDefaultAxes();  // Crear ejes predeterminados para el gráfico
+    graficoTDS->axes(Qt::Horizontal).first()->setTitleText("Días");  // Título para el eje X (Días)
+    graficoTDS->axes(Qt::Vertical).first()->setTitleText("TDS (ppm)");  // Título para el eje Y (TDS)
 
-    QVBoxLayout *layoutTDS = new QVBoxLayout(ui->graficoTDS);
-    layoutTDS->addWidget(graficoViewTDS);
-    ui->graficoTDS->setLayout(layoutTDS);
+    QVBoxLayout *layoutTDS = new QVBoxLayout(ui->graficoTDS);  // Layout para el gráfico de TDS
+    layoutTDS->addWidget(graficoViewTDS);  // Añadir la vista del gráfico
+    ui->graficoTDS->setLayout(layoutTDS);  // Configurar el layout del gráfico de TDS
 }
 
+// Función para ajustar los ejes del gráfico según los valores de la serie
 void historico::ajustarEjes(QLineSeries *serie, QChart *grafico)
 {
     if (serie->count() == 0) {
-        qDebug() << "No hay datos en la serie para ajustar ejes.";
+        qDebug() << "No hay datos en la serie para ajustar ejes.";  // Si no hay datos, no hacer nada
         return;
     }
 
+    // Encontrar el valor mínimo y máximo de los datos en la serie
     double minY = serie->at(0).y(), maxY = serie->at(0).y();
     for (int i = 1; i < serie->count(); ++i) {
-        minY = std::min(minY, serie->at(i).y());
-        maxY = std::max(maxY, serie->at(i).y());
+        minY = std::min(minY, serie->at(i).y());  // Calcular el valor mínimo
+        maxY = std::max(maxY, serie->at(i).y());  // Calcular el valor máximo
     }
 
-    grafico->axes(Qt::Vertical).first()->setRange(minY, maxY);
+    grafico->axes(Qt::Vertical).first()->setRange(minY, maxY);  // Ajustar el eje Y con los valores mínimo y máximo
 
-    // Ajustar el eje X si es necesario
+    // Ajustar el eje X con la fecha y hora
     if (auto *axisX = dynamic_cast<QDateTimeAxis *>(grafico->axes(Qt::Horizontal).first())) {
         axisX->setFormat("yyyy-MM-dd");
         axisX->setTitleText("Fecha y Hora");
@@ -123,79 +133,75 @@ void historico::ajustarEjes(QLineSeries *serie, QChart *grafico)
 
     qDebug() << "Ejes ajustados: Y (" << minY << ", " << maxY << ")";
 }
+
+// Función para actualizar los datos de las series y los gráficos
 void historico::updateData(const QVector<QJsonObject> &datos)
 {
-    // Calcula la diferencia de días
     QDateTime fechaInicio = obtenerFechaDesde();
     QDateTime fechaFin = obtenerFechaHasta();
 
+    // Calcula los días de diferencia entre las fechas de inicio y fin
     int diasDeDiferencia = fechaInicio.daysTo(fechaFin);
     qDebug() << "Días de diferencia entre las fechas: " << diasDeDiferencia;
 
-    // Ahora, vamos a iterar sobre los datos y calcular la diferencia de días
-    int diaContador = 0;  // Este contador representará los días desde la fecha de inicio
-
+    // Iterar sobre los datos recibidos
     for (const QJsonObject &registro : datos) {
         if (registro.contains("pH") && registro["pH"].isDouble() &&
             registro.contains("date") && registro["date"].isString()) {
             QDateTime fecha = QDateTime::fromString(registro["date"].toString(), "yyyy-MM-dd");
             double phValue = registro["pH"].toDouble();
-            // Usamos la diferencia de días
-            int diaDiferencia = fechaInicio.daysTo(fecha);
-            seriePH->append(diaDiferencia, phValue);
+            int diaDiferencia = fechaInicio.daysTo(fecha);  // Calcular la diferencia de días
+            seriePH->append(diaDiferencia, phValue);  // Añadir los datos de pH
         }
 
         if (registro.contains("Temperatura") && registro["Temperatura"].isDouble() &&
             registro.contains("date") && registro["date"].isString()) {
             QDateTime fecha = QDateTime::fromString(registro["date"].toString(), "yyyy-MM-dd");
             double tempValue = registro["Temperatura"].toDouble();
-            // Usamos la diferencia de días
-            int diaDiferencia = fechaInicio.daysTo(fecha);
-            serieTEMP->append(diaDiferencia, tempValue);
+            int diaDiferencia = fechaInicio.daysTo(fecha);  // Calcular la diferencia de días
+            serieTEMP->append(diaDiferencia, tempValue);  // Añadir los datos de temperatura
         }
 
         if (registro.contains("TDS") && registro["TDS"].isDouble() &&
             registro.contains("date") && registro["date"].isString()) {
             QDateTime fecha = QDateTime::fromString(registro["date"].toString(), "yyyy-MM-dd");
             double tdsValue = registro["TDS"].toDouble();
-            // Usamos la diferencia de días
-            int diaDiferencia = fechaInicio.daysTo(fecha);
-            serieTDS->append(diaDiferencia, tdsValue);
+            int diaDiferencia = fechaInicio.daysTo(fecha);  // Calcular la diferencia de días
+            serieTDS->append(diaDiferencia, tdsValue);  // Añadir los datos de TDS
         }
     }
 
-    // Ahora ajustamos los ejes
+    // Ajustar los ejes de los gráficos después de agregar los datos
     ajustarEjesConDias(seriePH, graficoPH, diasDeDiferencia);
     ajustarEjesConDias(serieTEMP, graficoTEMP, diasDeDiferencia);
     ajustarEjesConDias(serieTDS, graficoTDS, diasDeDiferencia);
 }
 
-// Cambia la implementación de la función para usar el valor de días (int)
+// Función para ajustar los ejes de los gráficos basados en la cantidad de días
 void historico::ajustarEjesConDias(QLineSeries *serie, QChart *grafico, int dias)
 {
     if (serie->count() == 0) {
-        qDebug() << "No hay datos en la serie para ajustar ejes.";
+        qDebug() << "No hay datos en la serie para ajustar ejes.";  // Si no hay datos, no hacer nada
         return;
     }
 
     double minY = serie->at(0).y(), maxY = serie->at(0).y();
     for (int i = 1; i < serie->count(); ++i) {
-        minY = std::min(minY, serie->at(i).y());
-        maxY = std::max(maxY, serie->at(i).y());
+        minY = std::min(minY, serie->at(i).y());  // Calcular el valor mínimo
+        maxY = std::max(maxY, serie->at(i).y());  // Calcular el valor máximo
     }
 
-    grafico->axes(Qt::Vertical).first()->setRange(minY, maxY);
+    grafico->axes(Qt::Vertical).first()->setRange(minY, maxY);  // Ajustar el eje Y con los valores mínimo y máximo
 
-    // Ajustamos el eje X a la cantidad de días
     if (auto *axisX = dynamic_cast<QValueAxis *>(grafico->axes(Qt::Horizontal).first())) {
-        axisX->setRange(0, dias);  // Usamos el valor de días directamente
-        axisX->setTitleText("Días");
+        axisX->setRange(0, dias);  // Usar el valor de días para el eje X
+        axisX->setTitleText("Días");  // Título del eje X
     }
 
     qDebug() << "Ejes ajustados: X (0, " << dias << ") y Y (" << minY << ", " << maxY << ")";
 }
 
-// Función de obtención de datos de prueba
+// Función que devuelve un conjunto de datos de prueba para ser graficados
 QVector<QJsonObject> historico::obtenerDatosDePrueba()
 {
     QVector<QJsonObject> datos;
@@ -215,7 +221,6 @@ QVector<QJsonObject> historico::obtenerDatosDePrueba()
     registro2["TDS"] = 350;
     registro2["date"] = "2024-11-21";
     datos.append(registro2);
-
     // Día 2024-11-22
     QJsonObject registro3;
     registro3["pH"] = 7.5;
@@ -304,21 +309,15 @@ QVector<QJsonObject> historico::obtenerDatosDePrueba()
     registro13["date"] = "2024-12-02";
     datos.append(registro13);
 
-
     return datos;
 }
 
-// Implementa la función fetchDataFromFirebase aquí si la necesitas
-void historico::fetchDataFromFirebase()
-{
-    // Lógica de fetch de datos de Firebase aquí
-}
-
+// Función para generar gráficos con los datos obtenidos
 void historico::generarGrafico()
 {
     qDebug() << "Generación de gráficos...";
 
-    // Crear un conjunto de datos de prueba
+    // Crear un conjunto de datos de prueba y actualizar los gráficos
     QVector<QJsonObject> datos = obtenerDatosDePrueba();
     updateData(datos);
 }

@@ -2,13 +2,14 @@
 #define MENU_H
 
 #include <QMainWindow>
-#include "alarma.h"
-#include "historico.h"
-#include "actual.h"
+#include "alarma.h"  // Incluir la clase alarma, que se utiliza en el menú
+#include "historico.h"  // Incluir la clase historico, que también se utiliza en el menú
+#include "actual.h"  // Incluir la clase actual, que se utiliza en el menú
 
 namespace Ui {
 class Menu;
 }
+
 
 class Menu : public QMainWindow
 {
@@ -20,17 +21,21 @@ public:
 
 private:
     Ui::Menu *ui;
+
+    // Punteros a las clases de las diferentes vistas (alarma, historico, actual)
     actual *actualw;
     historico *historicow;
     alarma *alarmaw;
 
+    // Método privado para establecer las conexiones de señales y slots
     void setupConnections();
 
 public slots:
-    void goToActual();
-    void goToAlarma();
-    void goToHistorico();
-    void goToMenu();
+    // Slots públicos que permiten la navegación entre las diferentes vistas
+    void goToActual();  // Navegar a la vista 'Actual'
+    void goToAlarma();  // Navegar a la vista 'Alarma'
+    void goToHistorico();  // Navegar a la vista 'Historico'
+    void goToMenu();  // Navegar a la vista principal 'Menu'
 };
 
 #endif // MENU_H
