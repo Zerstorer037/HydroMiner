@@ -1,0 +1,10 @@
+debug/actual.o
+debug/alarma.o
+debug/historico.o
+debug/main.o
+debug/menu.o
+debug/qrc_recursos.o
+debug/moc_actual.o
+debug/moc_alarma.o
+debug/moc_historico.o
+debug/moc_menu.o
