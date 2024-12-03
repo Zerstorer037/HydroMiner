@@ -100,8 +100,8 @@ QPushButton:hover {
    <widget class="QPushButton" name="registro">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>240</y>
+      <x>450</x>
+      <y>350</y>
       <width>281</width>
       <height>111</height>
      </rect>
@@ -133,8 +133,8 @@ QPushButton:hover {
    <widget class="QPushButton" name="alarma">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>240</y>
+      <x>760</x>
+      <y>350</y>
       <width>171</width>
       <height>111</height>
      </rect>
@@ -385,7 +385,7 @@ QPushButton:hover {
 background-color: rgba(193, 232, 255, 0);</string>
     </property>
     <property name="text">
-     <string>Fuente 1</string>
+     <string>Menu</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Bhistorico">
@@ -466,8 +466,8 @@ QPushButton:hover {
    <widget class="QPushButton" name="estado">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>90</y>
+      <x>450</x>
+      <y>230</y>
       <width>481</width>
       <height>111</height>
      </rect>
@@ -580,7 +580,7 @@ QPushButton:hover {
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>22</height>
+     <height>43</height>
     </rect>
    </property>
   </widget>

@@ -2,6 +2,7 @@
 #define ACTUAL_H
 
 #include <QMainWindow>
+#include <QLabel>
 
 namespace Ui {
 class actual;
@@ -24,6 +25,13 @@ private:
     Ui::actual *ui;
 
     void setupConnections();
+    void fetchDataFromFirebase(); // Método modificado para usar datos simulados
+    void actualizarLabel(QLabel* label, const QString& clasificacion, const QString& tipo);
+
+    // Funciones para clasificar los parámetros
+    QString clasificarPh(double ph);
+    QString clasificarTds(double tds);
+    QString clasificarTemperature(double temp);
 };
 
 #endif // ACTUAL_H
