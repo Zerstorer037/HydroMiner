@@ -29,11 +29,12 @@ private:
 
     // Métodos privados
     void setupConnections();  // Establece las conexiones de las señales de los botones
-    void actualizarLabel(QLabel* label, const QString& estado, double desviacion, double promedio, const QString& tipo);  // Actualiza la etiqueta con la clasificación, desviación estándar y promedio
+    void actualizarLabel(QLabel* label, const QString& estado, double desviacion, double promedio, const QString& tipo, double derivada);  // Actualiza la etiqueta con la clasificación, desviación estándar, promedio y derivada
 
-    // Funciones para calcular desviación estándar y promedio
+    // Funciones para calcular desviación estándar, promedio y primera derivada
     double calcularDesviacionEstandar(const QVector<double>& datos);  // Calcula la desviación estándar de un conjunto de datos
     double calcularPromedio(const QVector<double>& datos);  // Calcula el promedio de un conjunto de datos
+    double calcularPrimeraDerivada(const QVector<double>& datos);  // Calcula la primera derivada (tasa de cambio)
 
     // Función para clasificar los parámetros
     QString clasificarParametro(double valor, double valorMinimo, double valorMaximo);  // Clasifica el parámetro (pH, TDS, temperatura) en categorías como "Peligroso", "Mejorable" o "Seguro"

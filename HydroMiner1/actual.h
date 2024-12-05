@@ -13,7 +13,7 @@ class actual : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit actual(QWidget *parent = nullptr);  // Constructor, toma un puntero al widget padre
+    explicit actual(QWidget *parent = nullptr);
     ~actual();  // Destructor
 
 signals:
